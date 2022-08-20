@@ -10,11 +10,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.TimeZone;
-
 @SpringBootApplication
 @EnableScheduling
 public class MironlineApplication {
@@ -34,11 +29,7 @@ public class MironlineApplication {
     MainService mainService;
 
     @Scheduled(fixedDelay = 1 * 60 * 1000L, initialDelay = 0)
-    public void scheduled1() throws IOException {
-        try {
-            mainService.mainMethod();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+    public void scheduled1() {
+        mainService.mainMethod();
     }
 }

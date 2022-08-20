@@ -4,13 +4,12 @@ import com.github.kshashov.telegram.api.MessageType;
 import com.github.kshashov.telegram.api.TelegramMvcController;
 import com.github.kshashov.telegram.api.bind.annotation.BotController;
 import com.github.kshashov.telegram.api.bind.annotation.BotRequest;
+import com.kuxoca.mironline.ipServise.IpService;
+import com.kuxoca.mironline.service.LogService;
+import com.kuxoca.mironline.service.RatesService;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.kuxoca.mironline.service.LogService;
-import com.kuxoca.mironline.service.MainService;
-import com.kuxoca.mironline.service.RatesService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 @BotController
@@ -18,16 +17,25 @@ public class TelegramController implements TelegramMvcController {
     @Value("${telegramBotToken}")
     private String token;
 
+    public TelegramController(LogService logService, IpService ipService, RatesService ratesService) {
+        this.logService = logService;
+        this.ipService = ipService;
+        this.ratesService = ratesService;
+    }
+
     @Override
     public String getToken() {
         return token;
     }
 
-    @Autowired
+    private final
     LogService logService;
 
-    @Autowired
-    MainService mainService;
+    private final
+    IpService ipService;
+
+    final
+    RatesService ratesService;
 
     @BotRequest(value = "/start", type = {MessageType.MESSAGE})
     public SendMessage start(Message message) {
@@ -48,15 +56,17 @@ public class TelegramController implements TelegramMvcController {
                 "Показать текущий курс /rates");
     }
 
-    @Autowired
-    RatesService ratesService;
-
     @BotRequest(value = "/rates", type = {MessageType.MESSAGE})
     public SendMessage rates(Message message) {
         logService.logUserAction(message);
         return new SendMessage(message.chat().id(), ratesService.getStringRates()).parseMode(ParseMode.HTML);
     }
 
+    @BotRequest(value = "/ip", type = {MessageType.MESSAGE})
+    public SendMessage ip(Message message) {
+        logService.logUserAction(message);
+        return new SendMessage(message.chat().id(), ipService.getIp()).parseMode(ParseMode.HTML);
+    }
 }
 
 

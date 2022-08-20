@@ -5,7 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,10 +15,7 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 @Table(name = "mironline_telegramuser")
-public class TelegrammUser {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+public class TelegrammUser extends AbstractEntity {
     Long userId;
     String firsName;
     String lastName;

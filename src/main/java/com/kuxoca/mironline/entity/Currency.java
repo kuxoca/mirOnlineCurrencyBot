@@ -5,7 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,13 +15,10 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 @Table(name = "mironline_currency")
-public class Currency {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+public class Currency extends AbstractEntity {
     LocalDateTime localDateTime;
     String name;
-    float currency;
+    Float currency;
 
     public Currency(String name, Float currency) {
         this.name = name;
