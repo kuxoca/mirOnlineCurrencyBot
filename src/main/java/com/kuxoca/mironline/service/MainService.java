@@ -20,13 +20,11 @@ import java.util.*;
 @Component
 public class MainService {
 
-    @Value("${urlMironline}")
-    private String URL;
-
     private static final Logger logger = Logger.getLogger(MainService.class);
-
     private final CurrencyRepo currencyRepo;
     private final Map<String, Float> currencyMap = new HashMap<>();
+    @Value("${urlMironline}")
+    private String URL;
 
     public MainService(CurrencyRepo currencyRepo) {
         this.currencyRepo = currencyRepo;
