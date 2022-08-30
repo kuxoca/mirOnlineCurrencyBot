@@ -1,5 +1,5 @@
 # mirOnlineCurrencyBot
-### Демонтративный проект на Spring Boot.<br/>
+### Демонстративный проект на Spring Boot.<br/>
 В проекте использовались: 
 + JPA 
 + MySQL
