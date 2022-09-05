@@ -40,6 +40,12 @@ public class IpService {
         }
     }
 
+    @Scheduled(fixedDelay = 5 * 60 * 1000L)  // каждые 5 минуты обноавляем IP
+    public void scheduled1() {
+        makeIpAddress();
+//        dehssisfsFeignClient.setIpOnDehssisfs(ip); // каждую минуту отправляем запрос на heroku
+    }
+
     @PostConstruct
     private void makeIpAddress() {
 
@@ -59,12 +65,6 @@ public class IpService {
 
             }
         }
-    }
-
-    @Scheduled(fixedDelay = 5 * 60 * 1000L, initialDelay = 1000L)  // каждые 5 минуты обноавляем IP
-    public void scheduled1() {
-        makeIpAddress();
-//        dehssisfsFeignClient.setIpOnDehssisfs(ip); // каждую минуту отправляем запрос на heroku
     }
 
     private boolean isIp(String ip) { // проверка является ли строка IP адресом

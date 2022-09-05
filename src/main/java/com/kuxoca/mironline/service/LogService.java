@@ -5,6 +5,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface LogService {
-     void logUserAction(Message message);
+    void logUserAction(Message message);
 
 }

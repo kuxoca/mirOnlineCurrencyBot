@@ -1,5 +1,6 @@
 package com.kuxoca.mironline.service;
 
+import com.kuxoca.mironline.entity.CodeEnum;
 import com.kuxoca.mironline.entity.Currency;
 import com.kuxoca.mironline.repo.CurrencyRepo;
 import org.apache.log4j.Logger;
@@ -84,8 +85,15 @@ public class MainService {
         }
     }
 
-    public Map<String, Float> getCurrencyMap() {
-        return currencyMap;
+    public Map<CodeEnum, Float> getCurrencyMap() {
+        Map<CodeEnum, Float> map = new HashMap<>();
+
+        currencyMap.forEach((k, v) -> {
+            CodeEnum anEnum = Arrays.stream(CodeEnum.values()).filter(code -> code.getValue().equals(k)).findAny().orElse(null);
+            map.put(anEnum, v);
+        });
+
+        return map;
     }
 
     private Map<String, Float> getCurrencyFromMironline() {

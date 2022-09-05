@@ -11,61 +11,66 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 @BotController
 public class TelegramController implements TelegramMvcController {
+    final MessageSource messageSource;
+    final RatesService ratesService;
+    private final LogService logService;
+    private final IpService ipService;
     @Value("${telegramBotToken}")
     private String token;
 
-    public TelegramController(LogService logService, IpService ipService, RatesService ratesService) {
+    public TelegramController(LogService logService, IpService ipService, RatesService ratesService, MessageSource messageSource) {
         this.logService = logService;
         this.ipService = ipService;
         this.ratesService = ratesService;
+        this.messageSource = messageSource;
     }
-
-    @Override
-    public String getToken() {
-        return token;
-    }
-
-    private final
-    LogService logService;
-
-    private final
-    IpService ipService;
-
-    final
-    RatesService ratesService;
 
     @BotRequest(value = "/start", type = {MessageType.MESSAGE})
     public SendMessage start(Message message) {
         Long id = message.chat().id();
         logService.logUserAction(message);
-        return new SendMessage(message.chat().id(),
-                "Привет!\n" +
-                        "Это неофициальный сервис (бот). Автор не несет какой либо ответсвености.\n" +
-                        "Указанные значения курсов являются справочным.\n" +
-                        "Узнать текущие курсы можно на официальном сайте ПС \"МИР\": https://mironline.ru/\n\n" +
-                        "Показать текущий курс /rates").parseMode(ParseMode.HTML);
+        return new SendMessage(
+                message.chat().id(),
+                messageSource.getMessage("telegramController.start", new String[]{message.chat().firstName()}, getLocaleFromMessage(message)))
+                .parseMode(ParseMode.HTML);
     }
 
     @BotRequest(type = {MessageType.ANY})
     public SendMessage anyMessage(Message message) {
         logService.logUserAction(message);
-        return new SendMessage(message.chat().id(), "ох... я пока не понимаю эту команду.\n" +
-                "Показать текущий курс /rates");
+        return new SendMessage(
+                message.chat().id(),
+                messageSource.getMessage("telegramController.anyMessage", null, getLocaleFromMessage(message)))
+                .parseMode(ParseMode.HTML);
     }
 
     @BotRequest(value = "/rates", type = {MessageType.MESSAGE})
     public SendMessage rates(Message message) {
         logService.logUserAction(message);
-        return new SendMessage(message.chat().id(), ratesService.getStringRates()).parseMode(ParseMode.HTML);
+        return new SendMessage(message.chat().id(), ratesService.getStringRates(getLocaleFromMessage(message))).parseMode(ParseMode.HTML);
     }
 
     @BotRequest(value = "/ip", type = {MessageType.MESSAGE})
     public SendMessage ip(Message message) {
         logService.logUserAction(message);
-        return new SendMessage(message.chat().id(), ipService.getIp()).parseMode(ParseMode.HTML);
+        return new SendMessage(
+                message.chat().id(), ipService.getIp())
+                .parseMode(ParseMode.HTML);
+    }
+
+    private Locale getLocaleFromMessage(Message message) {
+        return new Locale(message.from().languageCode());
+    }
+
+    @Override
+    public String getToken() {
+        return token;
     }
 }
 

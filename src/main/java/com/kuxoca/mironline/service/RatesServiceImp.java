@@ -1,36 +1,42 @@
 package com.kuxoca.mironline.service;
 
+import com.kuxoca.mironline.entity.CodeEnum;
 import org.apache.log4j.Logger;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Map;
 
 @Service
 public class RatesServiceImp implements RatesService {
 
-    private final
-    MainService mainService;
-
     private static final Logger logger = Logger.getLogger(RatesServiceImp.class);
+    private final MainService mainService;
+    private final MessageSource messageSource;
 
-    public RatesServiceImp(MainService mainService) {
+    public RatesServiceImp(MainService mainService, MessageSource messageSource) {
         this.mainService = mainService;
+        this.messageSource = messageSource;
     }
 
     @Override
-    public String getStringRates() {
+    public String getStringRates(Locale locale) {
 
-        Map<String, Float> currencyMap = mainService.getCurrencyMap();
+        Map<CodeEnum, Float> currencyMapByCode;
+        currencyMapByCode = mainService.getCurrencyMap();
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("<b>Курсы валют платежной системы «Мир»:</b>\n");
-
-        currencyMap.forEach((name, currency) -> {
+        stringBuilder.append(messageSource.getMessage("ratesService.title", null, locale));
+        currencyMapByCode.forEach((charCode, currency) -> {
             stringBuilder
-                    .append("<b>").append(name).append("</b>").append(": ")
-                    .append(currency).append("₽").append("\n");
+                    .append("<b>")
+                    .append(messageSource.getMessage("ratesService." + charCode, null, locale))
+                    .append("</b>")
+                    .append(": ")
+                    .append(currency)
+                    .append("₽")
+                    .append("\n");
         });
-
-        stringBuilder.append("// Отражено как количество RUB за 1 единицу иностранной валюты.");
         return stringBuilder.toString();
     }
 }
