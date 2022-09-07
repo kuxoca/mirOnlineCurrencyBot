@@ -3,7 +3,7 @@ package com.kuxoca.mironline.service;
 import com.kuxoca.mironline.entity.CodeEnum;
 import com.kuxoca.mironline.entity.Currency;
 import com.kuxoca.mironline.repo.CurrencyRepo;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,10 +18,10 @@ import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.*;
 
+@Log4j2
 @Component
 public class MainService {
 
-    private static final Logger logger = Logger.getLogger(MainService.class);
     private final CurrencyRepo currencyRepo;
     private final Map<String, Float> currencyMap = new HashMap<>();
     @Value("${urlMironline}")
@@ -36,7 +36,7 @@ public class MainService {
         List<Currency> currencyList = new ArrayList<>(); // буферный лист значений курсов
         Map<String, Float> currencyMapMironline = getCurrencyFromMironline(); // загрузка курсов с сайта
 
-        //
+        Currency c = new Currency();
         currencyMapMironline.forEach((name, aFloat) -> {
             if (currencyMap.containsKey(name)) {
                 if (!(currencyMap.get(name).equals(aFloat))) {
@@ -59,20 +59,20 @@ public class MainService {
     @PostConstruct
     private void init() {
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
-        logger.info("l4j. INIT APP");
+        log.info("l4j. INIT APP");
         List<Currency> currencyList = new ArrayList<>();
         List<String> nameDistinctList = currencyRepo.findDistinctByName();
 
         if (!nameDistinctList.isEmpty()) {
-            logger.info("l4j. INIT FROM DB");
+            log.info("l4j. INIT FROM DB");
             nameDistinctList.forEach(name -> {
                 List<Float> aFloat = currencyRepo.findLastDataByName(name.trim());
                 currencyMap.put(name, aFloat.get(0));
-                logger.info("l4j. '" + name + "' " + aFloat.get(0));
+                log.info("l4j. '" + name + "' " + aFloat.get(0));
             });
 
         } else {
-            logger.info("l4j. INIT FROM Mironline");
+            log.info("l4j. INIT FROM Mironline");
             currencyMap.putAll(getCurrencyFromMironline());
             currencyMap.forEach((name, aFloat) -> {
                 Currency currency = new Currency(name, aFloat);
@@ -98,7 +98,7 @@ public class MainService {
 
     private Map<String, Float> getCurrencyFromMironline() {
 
-        logger.info("l4j. website course check...");
+        log.info("l4j. website course check...");
         Map<String, Float> currencyMapMironline = new HashMap<>();
 
         try {
@@ -120,9 +120,9 @@ public class MainService {
             }
 
         } catch (ParseException e) {
-            logger.error("l4j. ParseException", e);
+            log.error("l4j. ParseException", e);
         } catch (IOException e) {
-            logger.error("l4j. MirOnline is not available now", e);
+            log.error("l4j. MirOnline is not available now", e);
         }
         return currencyMapMironline;
     }
@@ -132,14 +132,10 @@ public class MainService {
 
             try {
                 currencyRepo.saveAll(currencyList);
-                currencyList.forEach(el -> {
-                    logger.info("l4j. Save Change currency: " + el.toString());
-                });
+                currencyList.forEach(el -> log.info("l4j. Save Change currency: " + el.toString()));
             } catch (Exception e) {
-                logger.error("l4j. Save ERROR ", e);
-                currencyList.forEach(el -> {
-                    logger.error("l4j. Save ERROR " + el.toString());
-                });
+                log.error("l4j. Save ERROR ", e);
+                currencyList.forEach(el -> log.error("l4j. Save ERROR " + el.toString()));
             }
         }
     }

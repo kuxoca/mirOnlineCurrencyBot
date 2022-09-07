@@ -1,17 +1,17 @@
 package com.kuxoca.mironline.service;
 
 import com.kuxoca.mironline.entity.CodeEnum;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.Locale;
 import java.util.Map;
 
+@Log4j2
 @Service
 public class RatesServiceImp implements RatesService {
 
-    private static final Logger logger = Logger.getLogger(RatesServiceImp.class);
     private final MainService mainService;
     private final MessageSource messageSource;
 

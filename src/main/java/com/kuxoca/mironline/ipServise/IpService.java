@@ -1,6 +1,6 @@
 package com.kuxoca.mironline.ipServise;
 
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +14,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Log4j2
 @Service
 public class IpService {
-
-
-    private static final Logger logger = Logger.getLogger(IpService.class);
 
     private static final String ipRegex = "(\\b25[0-5]|\\b2[0-4][0-9]|\\b[01]?[0-9][0-9]?)(\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}";
     private String ip = "";
@@ -36,7 +34,7 @@ public class IpService {
                     new URL("http://myip.dnsomatic.com/")
             );
         } catch (MalformedURLException e) {
-            logger.error("l4j IP", e);
+            log.error("l4j IP", e);
         }
     }
 
@@ -56,12 +54,12 @@ public class IpService {
                 );
                 String ip = in.readLine();
                 if (isIp(ip)) {
-                    logger.info("l4j. Load IP from: " + el + ", " + ip);
+                    log.info("l4j. Load IP from: " + el + ", " + ip);
                     saveIp(ip);
                     break;
                 }
             } catch (Exception e) {
-                logger.error("l4j IP, '" + el + "' ", e);
+                log.error("l4j IP, '" + el + "' ", e);
 
             }
         }
@@ -77,13 +75,13 @@ public class IpService {
 
         if (isIp(ip)) {
             if (!this.ip.equals(ip)) {
-                logger.info("l4j. new IP: " + ip);
+                log.info("l4j. new IP: " + ip);
                 this.ip = ip;
 //                ipRepo.save(new IpEntity(ip));
             }
             return true;
         } else {
-            logger.info("l4j. IP not found");
+            log.info("l4j. IP not found");
             return false;
         }
     }

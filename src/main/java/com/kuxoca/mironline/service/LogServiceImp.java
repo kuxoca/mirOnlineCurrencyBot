@@ -5,15 +5,14 @@ import com.kuxoca.mironline.entity.UserAction;
 import com.kuxoca.mironline.repo.TelegrammUserRepo;
 import com.kuxoca.mironline.repo.UserActionRepo;
 import com.pengrad.telegrambot.model.Message;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+@Log4j2
 @Service
 public class LogServiceImp implements LogService {
-
-    private static final Logger logger = Logger.getLogger(LogServiceImp.class);
 
     private final
     TelegrammUserRepo telegrammUserRepo;
@@ -27,7 +26,7 @@ public class LogServiceImp implements LogService {
     }
 
     public void logUserAction(Message message) {
-        logger.info("l4j. userId: " + message.chat().id() + ", message: '" + message.text() + "'");
+        log.info("l4j. userId: " + message.chat().id() + ", message: '" + message.text() + "'");
 
         if (isNewUser(message)) {
             registrationNewUser(message);
@@ -40,8 +39,8 @@ public class LogServiceImp implements LogService {
         try {
             return telegrammUserRepo.findTelegramUserByUserId(message.chat().id()) == null;
         } catch (Exception e) {
-            logger.error("l4j. DB ERROR ", e);
-            logger.error("l4j. BD ERROR " + message);
+            log.error("l4j. DB ERROR ", e);
+            log.error("l4j. BD ERROR " + message);
         }
         return false;
     }
@@ -54,13 +53,13 @@ public class LogServiceImp implements LogService {
         user.setFirsName(message.chat().firstName());
         user.setLastName(message.chat().lastName());
         user.setRegDate(LocalDateTime.now());
-        logger.info("l4j. REG new user " + user);
+        log.info("l4j. REG new user " + user);
 
         try {
             telegrammUserRepo.save(user);
         } catch (Exception e) {
-            logger.error("l4j. Save ERROR ", e);
-            logger.error("l4j. Save ERROR " + user);
+            log.error("l4j. Save ERROR ", e);
+            log.error("l4j. Save ERROR " + user);
         }
     }
 
@@ -73,8 +72,8 @@ public class LogServiceImp implements LogService {
             action.setMessage(message.text());
             userActionRepo.save(action);
         } catch (Exception e) {
-            logger.error("l4j. BD ERROR ", e);
-            logger.error("l4j. BD ERROR " + action);
+            log.error("l4j. BD ERROR ", e);
+            log.error("l4j. BD ERROR " + action);
         }
 
     }
