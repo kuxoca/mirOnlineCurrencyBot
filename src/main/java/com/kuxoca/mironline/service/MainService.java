@@ -2,7 +2,9 @@ package com.kuxoca.mironline.service;
 
 import com.kuxoca.mironline.entity.CodeEnum;
 import com.kuxoca.mironline.entity.Currency;
+import com.kuxoca.mironline.entity.CurrencyDto;
 import com.kuxoca.mironline.repo.CurrencyRepo;
+import com.kuxoca.mironline.util.Mapper;
 import lombok.extern.log4j.Log4j2;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,12 +24,14 @@ import java.util.*;
 @Component
 public class MainService {
 
+    private final Mapper mapper;
     private final CurrencyRepo currencyRepo;
     private final Map<String, Float> currencyMap = new HashMap<>();
     @Value("${urlMironline}")
     private String URL;
 
-    public MainService(CurrencyRepo currencyRepo) {
+    public MainService(Mapper mapper, CurrencyRepo currencyRepo) {
+        this.mapper = mapper;
         this.currencyRepo = currencyRepo;
     }
 
@@ -36,7 +40,6 @@ public class MainService {
         List<Currency> currencyList = new ArrayList<>(); // буферный лист значений курсов
         Map<String, Float> currencyMapMironline = getCurrencyFromMironline(); // загрузка курсов с сайта
 
-        Currency c = new Currency();
         currencyMapMironline.forEach((name, aFloat) -> {
             if (currencyMap.containsKey(name)) {
                 if (!(currencyMap.get(name).equals(aFloat))) {
@@ -66,9 +69,9 @@ public class MainService {
         if (!nameDistinctList.isEmpty()) {
             log.info("l4j. INIT FROM DB");
             nameDistinctList.forEach(name -> {
-                List<Float> aFloat = currencyRepo.findLastDataByName(name.trim());
-                currencyMap.put(name, aFloat.get(0));
-                log.info("l4j. '" + name + "' " + aFloat.get(0));
+                Float aFloat = currencyRepo.findLastDataByName(name.trim());
+                currencyMap.put(name, aFloat);
+                log.info("l4j. '" + name + "' " + aFloat);
             });
 
         } else {
@@ -85,15 +88,15 @@ public class MainService {
         }
     }
 
-    public Map<CodeEnum, Float> getCurrencyMap() {
-        Map<CodeEnum, Float> map = new HashMap<>();
+    public Set<CurrencyDto> getCurrencyDtoSet() {
+        Set<CurrencyDto> set = new TreeSet<>();
 
         currencyMap.forEach((k, v) -> {
-            CodeEnum anEnum = Arrays.stream(CodeEnum.values()).filter(code -> code.getValue().equals(k)).findAny().orElse(null);
-            map.put(anEnum, v);
+            CurrencyDto currencyDto = mapper.toCurrencyDto(new Currency(k, v));
+            set.add(currencyDto);
         });
 
-        return map;
+        return set;
     }
 
     private Map<String, Float> getCurrencyFromMironline() {
