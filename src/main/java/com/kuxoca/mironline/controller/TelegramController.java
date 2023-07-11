@@ -30,7 +30,6 @@ public class TelegramController implements TelegramMvcController {
 
     @BotRequest(value = "/start", type = {MessageType.MESSAGE})
     public SendMessage start(Message message) {
-        Long id = message.chat().id();
         logService.logUserAction(message);
         return new SendMessage(
                 message.chat().id(),
