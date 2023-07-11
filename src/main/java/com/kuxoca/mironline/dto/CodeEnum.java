@@ -1,4 +1,4 @@
-package com.kuxoca.mironline.entity;
+package com.kuxoca.mironline.dto;
 
 public enum CodeEnum {
     USD("Доллар США"),
@@ -11,7 +11,10 @@ public enum CodeEnum {
     TJS("Таджикский сомони"),
     AMD("Армянский драм"),
     KZT("Казахстанский тенге"),
-    VND("Вьетнамский донг");
+    VND("Вьетнамский донг"),
+    VEF("Венесуэльский боливар"),
+    CUP("Кубинский песо");
+
     private final String value;
 
     CodeEnum(String value) {

@@ -6,9 +6,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class MironlineApplication {
+public class MirOnlineApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MironlineApplication.class, args);
+        SpringApplication.run(MirOnlineApplication.class, args);
     }
 }

@@ -1,8 +1,8 @@
 package com.kuxoca.mironline.service;
 
-import com.kuxoca.mironline.entity.TelegrammUser;
+import com.kuxoca.mironline.entity.TelegramUser;
 import com.kuxoca.mironline.entity.UserAction;
-import com.kuxoca.mironline.repo.TelegrammUserRepo;
+import com.kuxoca.mironline.repo.TelegramUserRepo;
 import com.kuxoca.mironline.repo.UserActionRepo;
 import com.pengrad.telegrambot.model.Message;
 import lombok.extern.log4j.Log4j2;
@@ -15,13 +15,13 @@ import java.time.LocalDateTime;
 public class LogServiceImp implements LogService {
 
     private final
-    TelegrammUserRepo telegrammUserRepo;
+    TelegramUserRepo telegramUserRepo;
 
     private final
     UserActionRepo userActionRepo;
 
-    public LogServiceImp(TelegrammUserRepo telegrammUserRepo, UserActionRepo userActionRepo) {
-        this.telegrammUserRepo = telegrammUserRepo;
+    public LogServiceImp(TelegramUserRepo telegramUserRepo, UserActionRepo userActionRepo) {
+        this.telegramUserRepo = telegramUserRepo;
         this.userActionRepo = userActionRepo;
     }
 
@@ -37,7 +37,7 @@ public class LogServiceImp implements LogService {
     private boolean isNewUser(Message message) {
 
         try {
-            return telegrammUserRepo.findTelegramUserByUserId(message.chat().id()) == null;
+            return telegramUserRepo.findTelegramUserByUserId(message.chat().id()) == null;
         } catch (Exception e) {
             log.error("l4j. DB ERROR ", e);
             log.error("l4j. BD ERROR " + message);
@@ -47,7 +47,7 @@ public class LogServiceImp implements LogService {
 
     private void registrationNewUser(Message message) {
 
-        TelegrammUser user = new TelegrammUser();
+        TelegramUser user = new TelegramUser();
         user.setUserId(message.chat().id());
         user.setUserName(message.chat().username());
         user.setFirsName(message.chat().firstName());
@@ -56,7 +56,7 @@ public class LogServiceImp implements LogService {
         log.info("l4j. REG new user " + user);
 
         try {
-            telegrammUserRepo.save(user);
+            telegramUserRepo.save(user);
         } catch (Exception e) {
             log.error("l4j. Save ERROR ", e);
             log.error("l4j. Save ERROR " + user);
@@ -66,7 +66,7 @@ public class LogServiceImp implements LogService {
     private void saveAction(Message message) {
         UserAction action = new UserAction();
         try {
-            TelegrammUser telegramUser = telegrammUserRepo.findTelegramUserByUserId(message.chat().id());
+            TelegramUser telegramUser = telegramUserRepo.findTelegramUserByUserId(message.chat().id());
             action.setUser(telegramUser);
             action.setDtQuery(LocalDateTime.now());
             action.setMessage(message.text());

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 @Table(name = "mironline_telegramuser")
-public class TelegrammUser extends AbstractEntity {
+public class TelegramUser extends AbstractEntity {
     Long userId;
     String firsName;
     String lastName;

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserAction extends AbstractEntity {
     @ManyToOne
-    TelegrammUser user;
+    TelegramUser user;
     LocalDateTime dtQuery;
     String message;
 }

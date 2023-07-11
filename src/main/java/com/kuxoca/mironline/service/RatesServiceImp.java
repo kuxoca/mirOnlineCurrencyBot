@@ -1,6 +1,6 @@
 package com.kuxoca.mironline.service;
 
-import com.kuxoca.mironline.entity.CurrencyDto;
+import com.kuxoca.mironline.dto.CurrencyDto;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;

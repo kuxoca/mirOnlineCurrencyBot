@@ -1,8 +1,8 @@
 package com.kuxoca.mironline.util;
 
-import com.kuxoca.mironline.entity.CodeEnum;
+import com.kuxoca.mironline.dto.CodeEnum;
 import com.kuxoca.mironline.entity.Currency;
-import com.kuxoca.mironline.entity.CurrencyDto;
+import com.kuxoca.mironline.dto.CurrencyDto;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

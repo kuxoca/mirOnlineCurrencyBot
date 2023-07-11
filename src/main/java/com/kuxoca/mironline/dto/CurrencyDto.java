@@ -1,18 +1,19 @@
-package com.kuxoca.mironline.entity;
+package com.kuxoca.mironline.dto;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class CurrencyDto implements Comparable<CurrencyDto> {
     CodeEnum anEnum;
-    Float aFloat;
+    BigDecimal aFloat;
 
     @Override
     public int compareTo(@NotNull CurrencyDto o) {

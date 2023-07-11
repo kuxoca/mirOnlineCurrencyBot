@@ -1,7 +1,7 @@
 # mirOnlineCurrencyBot
 ### Демонстративный проект на Spring Boot.<br/>
 В проекте использовались: 
-+ JPA 
++ Spring JPQL 
 + MySQL
 + Telegram MVC 
 + Jsoup 

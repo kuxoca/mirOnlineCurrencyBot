@@ -1,8 +1,7 @@
 package com.kuxoca.mironline.service;
 
-import com.kuxoca.mironline.entity.CodeEnum;
 import com.kuxoca.mironline.entity.Currency;
-import com.kuxoca.mironline.entity.CurrencyDto;
+import com.kuxoca.mironline.dto.CurrencyDto;
 import com.kuxoca.mironline.repo.CurrencyRepo;
 import com.kuxoca.mironline.util.Mapper;
 import lombok.extern.log4j.Log4j2;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -26,7 +26,8 @@ public class MainService {
 
     private final Mapper mapper;
     private final CurrencyRepo currencyRepo;
-    private final Map<String, Float> currencyMap = new HashMap<>();
+    private final Map<String, BigDecimal> currencyMap = new HashMap<>();
+
     @Value("${urlMironline}")
     private String URL;
 
@@ -38,19 +39,19 @@ public class MainService {
     public void mainMethod() {
 
         List<Currency> currencyList = new ArrayList<>(); // буферный лист значений курсов
-        Map<String, Float> currencyMapMironline = getCurrencyFromMironline(); // загрузка курсов с сайта
+        Map<String, BigDecimal> currencyMapMironline = getCurrencyFromMironline(); // загрузка курсов с сайта
 
-        currencyMapMironline.forEach((name, aFloat) -> {
+        currencyMapMironline.forEach((name, aBigDecimal) -> {
             if (currencyMap.containsKey(name)) {
-                if (!(currencyMap.get(name).equals(aFloat))) {
-                    Currency currency = new Currency(name, aFloat);
+                if (!(currencyMap.get(name).compareTo(aBigDecimal) == 0)) {
+                    Currency currency = new Currency(name, aBigDecimal);
                     currencyList.add(currency);
-                    currencyMap.put(name, aFloat);
+                    currencyMap.put(name, aBigDecimal);
                 }
             } else {
-                Currency currency = new Currency(name, aFloat);
+                Currency currency = new Currency(name, aBigDecimal);
                 currencyList.add(currency);
-                currencyMap.put(name, aFloat);
+                currencyMap.put(name, aBigDecimal);
             }
         });
 
@@ -69,9 +70,9 @@ public class MainService {
         if (!nameDistinctList.isEmpty()) {
             log.info("l4j. INIT FROM DB");
             nameDistinctList.forEach(name -> {
-                Float aFloat = currencyRepo.findLastDataByName(name.trim());
-                currencyMap.put(name, aFloat);
-                log.info("l4j. '" + name + "' " + aFloat);
+                BigDecimal aBigDecimal = currencyRepo.findLastDataByName(name.trim());
+                currencyMap.put(name, aBigDecimal);
+                log.info("l4j. '" + name + "' " + aBigDecimal);
             });
 
         } else {
@@ -91,7 +92,7 @@ public class MainService {
     public Set<CurrencyDto> getCurrencyDtoSet() {
         Set<CurrencyDto> set = new TreeSet<>();
 
-        currencyMap.forEach((k, v) -> {
+        getCurrencyFromMironline().forEach((k, v) -> {
             CurrencyDto currencyDto = mapper.toCurrencyDto(new Currency(k, v));
             set.add(currencyDto);
         });
@@ -99,10 +100,10 @@ public class MainService {
         return set;
     }
 
-    private Map<String, Float> getCurrencyFromMironline() {
+    private Map<String, BigDecimal> getCurrencyFromMironline() {
 
         log.info("l4j. website course check...");
-        Map<String, Float> currencyMapMironline = new HashMap<>();
+        Map<String, BigDecimal> currencyMapMironline = new HashMap<>();
 
         try {
             Document doc = Jsoup.connect(URL).get();
@@ -117,7 +118,8 @@ public class MainService {
                     symbols.setDecimalSeparator(',');
                     DecimalFormat decimalFormat = new DecimalFormat();
                     decimalFormat.setDecimalFormatSymbols(symbols);
-                    Float curr = decimalFormat.parse(td.get(1).text().trim()).floatValue();
+                    decimalFormat.setParseBigDecimal(true);
+                    BigDecimal curr = (BigDecimal) decimalFormat.parse(td.get(1).text().trim());
                     currencyMapMironline.put(name, curr);
                 }
             }

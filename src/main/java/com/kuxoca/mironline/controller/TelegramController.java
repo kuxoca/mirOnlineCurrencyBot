@@ -4,7 +4,6 @@ import com.github.kshashov.telegram.api.MessageType;
 import com.github.kshashov.telegram.api.TelegramMvcController;
 import com.github.kshashov.telegram.api.bind.annotation.BotController;
 import com.github.kshashov.telegram.api.bind.annotation.BotRequest;
-import com.kuxoca.mironline.ipServise.IpService;
 import com.kuxoca.mironline.service.LogService;
 import com.kuxoca.mironline.service.RatesService;
 import com.pengrad.telegrambot.model.Message;
@@ -20,13 +19,11 @@ public class TelegramController implements TelegramMvcController {
     final MessageSource messageSource;
     final RatesService ratesService;
     private final LogService logService;
-    private final IpService ipService;
     @Value("${telegramBotToken}")
     private String token;
 
-    public TelegramController(LogService logService, IpService ipService, RatesService ratesService, MessageSource messageSource) {
+    public TelegramController(LogService logService, RatesService ratesService, MessageSource messageSource) {
         this.logService = logService;
-        this.ipService = ipService;
         this.ratesService = ratesService;
         this.messageSource = messageSource;
     }
@@ -54,14 +51,6 @@ public class TelegramController implements TelegramMvcController {
     public SendMessage rates(Message message) {
         logService.logUserAction(message);
         return new SendMessage(message.chat().id(), ratesService.getStringRates(getLocaleFromMessage(message))).parseMode(ParseMode.HTML);
-    }
-
-    @BotRequest(value = "/ip", type = {MessageType.MESSAGE})
-    public SendMessage ip(Message message) {
-        logService.logUserAction(message);
-        return new SendMessage(
-                message.chat().id(), ipService.getIp())
-                .parseMode(ParseMode.HTML);
     }
 
     private Locale getLocaleFromMessage(Message message) {
