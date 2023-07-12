@@ -80,7 +80,6 @@ public class MainServiceImp implements MainService {
     private void init() {
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
         log.info("l4j. INIT APP");
-        List<Currency> currencyList = new ArrayList<>();
         List<String> nameDistinctList = currencyRepo.findDistinctByName();
 
         if (!nameDistinctList.isEmpty()) {
@@ -93,16 +92,7 @@ public class MainServiceImp implements MainService {
 
         } else {
             log.info("l4j. INIT FROM MirOnline");
-            currencyMap.putAll(getCurrencyFromMirOnline());
-            tempCurrencyMap.putAll(currencyMap);
-            currencyMap.forEach((name, aBigDecimal) -> {
-                Currency currency = new Currency(name, aBigDecimal);
-                currencyList.add(currency);
-            });
-
-            if (!currencyList.isEmpty()) {
-                currencyRepo.saveAll(currencyList);
-            }
+            updateCurrency();
         }
     }
 
