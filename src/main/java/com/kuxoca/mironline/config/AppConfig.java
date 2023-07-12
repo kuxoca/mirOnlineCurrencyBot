@@ -1,7 +1,6 @@
 package com.kuxoca.mironline.config;
 
-import com.kuxoca.mironline.service.MainService;
-import org.springframework.beans.factory.annotation.Value;
+import com.kuxoca.mironline.service.MainServiceImp;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +14,10 @@ import java.util.Locale;
 @Configuration
 public class AppConfig {
 
-    private final MainService mainService;
+    private final MainServiceImp mainServiceImp;
 
-    public AppConfig(MainService mainService) {
-        this.mainService = mainService;
+    public AppConfig(MainServiceImp mainServiceImp) {
+        this.mainServiceImp = mainServiceImp;
     }
 
     @Bean("messageSource")
@@ -42,6 +41,6 @@ public class AppConfig {
 
     @Scheduled(fixedDelay = 60 * 1000L, initialDelay = 0)
     public void scheduled1() {
-        mainService.mainMethod();
+        mainServiceImp.mainMethod();
     }
 }

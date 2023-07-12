@@ -12,18 +12,18 @@ import java.util.Set;
 @Service
 public class RatesServiceImp implements RatesService {
 
-    private final MainService mainService;
+    private final MainServiceImp mainServiceImp;
     private final MessageSource messageSource;
 
-    public RatesServiceImp(MainService mainService, MessageSource messageSource) {
-        this.mainService = mainService;
+    public RatesServiceImp(MainServiceImp mainServiceImp, MessageSource messageSource) {
+        this.mainServiceImp = mainServiceImp;
         this.messageSource = messageSource;
     }
 
     @Override
     public String getStringRates(Locale locale) {
 
-        Set<CurrencyDto> set = mainService.getCurrencyDtoSet();
+        Set<CurrencyDto> set = mainServiceImp.getCurrencyDtoSet();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
                 .append(messageSource.getMessage("ratesService.title", null, locale))
