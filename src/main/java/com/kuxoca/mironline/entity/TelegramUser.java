@@ -1,9 +1,7 @@
 package com.kuxoca.mironline.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -14,6 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "mironline_telegramuser")
 public class TelegramUser extends AbstractEntity {
     Long userId;

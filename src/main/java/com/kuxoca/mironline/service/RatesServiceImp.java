@@ -34,7 +34,7 @@ public class RatesServiceImp implements RatesService {
                     .append(messageSource.getMessage("ratesService." + el.getAnEnum(), null, locale))
                     .append("</b>")
                     .append(": ")
-                    .append(el.getAFloat())
+                    .append(el.getABigDecimal())
                     .append("₽")
                     .append("\n");
         });

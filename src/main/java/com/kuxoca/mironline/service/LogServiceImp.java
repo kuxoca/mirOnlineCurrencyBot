@@ -26,7 +26,7 @@ public class LogServiceImp implements LogService {
     }
 
     public void logUserAction(Message message) {
-        log.info("l4j. userId: " + message.chat().id() + ", message: '" + message.text() + "'");
+        log.info("l4j. userId: '{}', message: '{}'", message.chat().id(), message.text());
 
         if (isNewUser(message)) {
             registrationNewUser(message);
@@ -40,7 +40,7 @@ public class LogServiceImp implements LogService {
             return telegramUserRepo.findTelegramUserByUserId(message.chat().id()) == null;
         } catch (Exception e) {
             log.error("l4j. DB ERROR ", e);
-            log.error("l4j. BD ERROR " + message);
+            log.error("l4j. BD ERROR {}", message);
         }
         return false;
     }
@@ -53,13 +53,13 @@ public class LogServiceImp implements LogService {
         user.setFirsName(message.chat().firstName());
         user.setLastName(message.chat().lastName());
         user.setRegDate(LocalDateTime.now());
-        log.info("l4j. REG new user " + user);
+        log.info("l4j. REG new user {}", user);
 
         try {
             telegramUserRepo.save(user);
         } catch (Exception e) {
             log.error("l4j. Save ERROR ", e);
-            log.error("l4j. Save ERROR " + user);
+            log.error("l4j. Save ERROR {}", user);
         }
     }
 
@@ -73,7 +73,7 @@ public class LogServiceImp implements LogService {
             userActionRepo.save(action);
         } catch (Exception e) {
             log.error("l4j. BD ERROR ", e);
-            log.error("l4j. BD ERROR " + action);
+            log.error("l4j. BD ERROR {}", action);
         }
 
     }

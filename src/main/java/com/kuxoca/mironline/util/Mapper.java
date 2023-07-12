@@ -14,6 +14,6 @@ public class Mapper {
     }
 
     public Currency toCurrency(CurrencyDto currencyDto) {
-        return new Currency(currencyDto.getAnEnum().getValue(), currencyDto.getAFloat());
+        return new Currency(currencyDto.getAnEnum().getValue(), currencyDto.getABigDecimal());
     }
 }

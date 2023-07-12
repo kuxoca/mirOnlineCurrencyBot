@@ -1,6 +1,7 @@
 package com.kuxoca.mironline.config;
 
 import com.kuxoca.mironline.service.MainService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +40,7 @@ public class AppConfig {
         return scheduler;
     }
 
-    @Scheduled(fixedDelay = 1 * 60 * 1000L, initialDelay = 0)
+    @Scheduled(fixedDelay = 60 * 1000L, initialDelay = 0)
     public void scheduled1() {
         mainService.mainMethod();
     }
