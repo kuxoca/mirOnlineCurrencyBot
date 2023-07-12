@@ -22,13 +22,14 @@ import java.util.*;
 
 @Log4j2
 @Component
-public class MainServiceImp {
+public class MainServiceImp implements MainService {
 
     private final Mapper mapper;
     private final CurrencyRepo currencyRepo;
-    private final Map<String, BigDecimal> currencyMap = new HashMap<>();
+    private Map<String, BigDecimal> currencyMap = new HashMap<>();
+    private final Map<String, BigDecimal> tempCurrencyMap = new HashMap<>();
 
-    @Value("${urlMironline}")
+    @Value("${urlMirOnline}")
     private String URL;
 
     public MainServiceImp(Mapper mapper, CurrencyRepo currencyRepo) {
@@ -36,22 +37,37 @@ public class MainServiceImp {
         this.currencyRepo = currencyRepo;
     }
 
-    public void mainMethod() {
+    public void updateCurrency() {
+        currencyMap = getCurrencyFromMirOnline();
+        updateInDb();
+    }
+
+    public Set<CurrencyDto> getCurrencyDtoSet() {
+        Set<CurrencyDto> set = new TreeSet<>();
+
+        currencyMap.forEach((k, v) -> {
+            CurrencyDto currencyDto = mapper.toCurrencyDto(new Currency(k, v));
+            set.add(currencyDto);
+        });
+
+        return set;
+    }
+
+    private void updateInDb() {
 
         List<Currency> currencyList = new ArrayList<>(); // буферный лист значений курсов
-        Map<String, BigDecimal> currencyMapMirOnline = getCurrencyFromMirOnline(); // загрузка курсов с сайта
 
-        currencyMapMirOnline.forEach((name, aBigDecimal) -> {
-            if (currencyMap.containsKey(name)) {
-                if (!(currencyMap.get(name).compareTo(aBigDecimal) == 0)) {
+        currencyMap.forEach((name, aBigDecimal) -> {
+            if (tempCurrencyMap.containsKey(name)) {
+                if (!(tempCurrencyMap.get(name).compareTo(aBigDecimal) == 0)) {
                     Currency currency = new Currency(name, aBigDecimal);
                     currencyList.add(currency);
-                    currencyMap.put(name, aBigDecimal);
+                    tempCurrencyMap.put(name, aBigDecimal);
                 }
             } else {
                 Currency currency = new Currency(name, aBigDecimal);
                 currencyList.add(currency);
-                currencyMap.put(name, aBigDecimal);
+                tempCurrencyMap.put(name, aBigDecimal);
             }
         });
 
@@ -71,13 +87,14 @@ public class MainServiceImp {
             log.info("l4j. INIT FROM DB");
             nameDistinctList.forEach(name -> {
                 BigDecimal aBigDecimal = currencyRepo.findLastDataByName(name.trim());
-                currencyMap.put(name, aBigDecimal);
+                tempCurrencyMap.put(name, aBigDecimal);
                 log.info("l4j. '" + name + "' " + aBigDecimal);
             });
 
         } else {
             log.info("l4j. INIT FROM MirOnline");
             currencyMap.putAll(getCurrencyFromMirOnline());
+            tempCurrencyMap.putAll(currencyMap);
             currencyMap.forEach((name, aBigDecimal) -> {
                 Currency currency = new Currency(name, aBigDecimal);
                 currencyList.add(currency);
@@ -87,17 +104,6 @@ public class MainServiceImp {
                 currencyRepo.saveAll(currencyList);
             }
         }
-    }
-
-    public Set<CurrencyDto> getCurrencyDtoSet() {
-        Set<CurrencyDto> set = new TreeSet<>();
-
-        getCurrencyFromMirOnline().forEach((k, v) -> {
-            CurrencyDto currencyDto = mapper.toCurrencyDto(new Currency(k, v));
-            set.add(currencyDto);
-        });
-
-        return set;
     }
 
     private Map<String, BigDecimal> getCurrencyFromMirOnline() {

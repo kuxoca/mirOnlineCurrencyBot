@@ -41,6 +41,6 @@ public class AppConfig {
 
     @Scheduled(fixedDelay = 60 * 1000L, initialDelay = 0)
     public void scheduled1() {
-        mainServiceImp.mainMethod();
+        mainServiceImp.updateCurrency();
     }
 }

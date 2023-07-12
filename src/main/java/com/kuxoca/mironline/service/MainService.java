@@ -6,4 +6,6 @@ import java.util.Set;
 
 public interface MainService {
     Set<CurrencyDto> getCurrencyDtoSet();
+
+    void updateCurrency();
 }
